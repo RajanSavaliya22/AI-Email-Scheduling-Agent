@@ -1,0 +1,7 @@
+.env
+
+.DS_Store
+package-lock.json
+.agent-backend/package-lock.json
+.agent-backend/node_modules
+
