@@ -40,10 +40,11 @@ model Preference {
   id                String   @id @default(uuid())
   userId            String   @unique
   user              User     @relation(fields: [userId], references: [id])
-  workingHoursStart Int      @default(9)
-  workingHoursEnd   Int      @default(17)
+  workingHoursStart Int      @default(9) // 24hr format, e.g. 9 = 9am
+  workingHoursEnd   Int      @default(17) // 17 = 5pm
   meetingBufferMins Int      @default(15)
-  timezone          String   @default("UTC")
+  defaultMeetingMins Int     @default(30)
+  timezone          String   @default("Asia/Kolkata")
 }
 
 model Email {
@@ -58,6 +59,7 @@ model Email {
   summary       String?
   priority      String?
   actionItems   Json?
+  suggestedReply String?
   status        String    @default("unread")
   receivedAt    DateTime
   createdAt     DateTime  @default(now())

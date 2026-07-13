@@ -2,20 +2,6 @@
 import { prisma } from '../config/db';
 import { Prisma } from '@prisma/client';
 
-export async function saveEmail(userId: string, emailData: {
-  threadId: string;
-  sender: string;
-  subject: string;
-  bodyRaw: string;
-}) {
-  return prisma.email.create({
-    data: {
-      userId,
-      ...emailData,
-    },
-  });
-}
-
 export async function getUnprocessedEmails(userId: string) {
   return prisma.email.findMany({
     where: { userId, status: 'unread' },
