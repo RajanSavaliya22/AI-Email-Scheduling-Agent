@@ -11,7 +11,7 @@ export async function summarizeUnprocessedEmails() {
 
   for (const email of emails) {
     try {
-      const result = await summarizeEmail({
+      const result = await summarizeEmail(email.userId, {
         sender: email.sender,
         subject: email.subject,
         bodyRaw: email.bodyRaw,
@@ -24,7 +24,7 @@ export async function summarizeUnprocessedEmails() {
           priority: result.priority,
           actionItems: result.actionItems,
           suggestedReply: result.suggestedReplyDraft,
-          status: 'summarized',
+          status: result.suggestedReplyDraft ? 'draft_pending' : 'summarized',
         },
       });
 

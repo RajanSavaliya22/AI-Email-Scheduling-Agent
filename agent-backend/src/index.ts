@@ -7,6 +7,10 @@ import passport from './config/passport';
 import authRoutes from './routes/auth';
 import { startScheduledJobs } from './jobs/scheduler';
 import devRoutes from './routes/dev';
+import settingsRoutes from './routes/settings';
+import actionRoutes from './routes/actions';
+
+
 dotenv.config();
 
 const app = express();
@@ -14,6 +18,9 @@ app.use(express.json());
 app.use(session({ secret: process.env.SESSION_SECRET!, resave: false, saveUninitialized: false }));
 app.use('/auth', authRoutes);
 app.use('/dev', devRoutes);
+app.use('/settings', settingsRoutes);
+app.use('/actions', actionRoutes);
+
 app.use(passport.initialize());
 app.use(passport.session());
 

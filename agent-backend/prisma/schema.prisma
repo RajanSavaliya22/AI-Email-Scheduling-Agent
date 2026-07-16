@@ -45,24 +45,42 @@ model Preference {
   meetingBufferMins Int      @default(15)
   defaultMeetingMins Int     @default(30)
   timezone          String   @default("Asia/Kolkata")
+  tonePreference      String   @default("professional") // "professional" | "casual" | "concise"
+  vipContacts         VipContact[]
+
+}
+
+model VipContact {
+  id            String     @id @default(uuid())
+  preferenceId  String
+  preference    Preference @relation(fields: [preferenceId], references: [id])
+  email         String
+  label         String?    // e.g. "Manager", "Key Client"
+
+  @@unique([preferenceId, email])
 }
 
 model Email {
-  id            String    @id @default(uuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
-  gmailId       String    @unique   // <-- prevents duplicate ingestion
-  threadId      String
-  sender        String
-  subject       String
-  bodyRaw       String
-  summary       String?
-  priority      String?
-  actionItems   Json?
-  suggestedReply String?
-  status        String    @default("unread")
-  receivedAt    DateTime
-  createdAt     DateTime  @default(now())
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  gmailId         String    @unique
+  threadId        String
+  sender          String
+  subject         String
+  bodyRaw         String
+  summary         String?
+  priority        String?
+  actionItems     Json?
+  suggestedReply  String?
+  editedReply     String?   // user's edited version, if they changed the draft
+  status          String    @default("unread")
+  // unread -> summarized -> draft_pending -> approved -> sent
+  //                                       -> rejected
+  sentAt          DateTime?
+  receivedAt      DateTime
+  createdAt       DateTime  @default(now())
+  notifiedAt    DateTime?
 }
 
 model CalendarEvent {
@@ -73,5 +91,6 @@ model CalendarEvent {
   startTime     DateTime
   endTime       DateTime
   status        String    @default("proposed") // proposed, confirmed, cancelled
+  googleEventId String?   // set once actually created on Google Calendar
   createdAt     DateTime  @default(now())
 }

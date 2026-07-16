@@ -7,6 +7,7 @@ import { summarizeEmail } from '../services/summarizationService';
 // Edit these test cases freely to probe different scenarios
 const testEmails = [
   {
+    userId: 'user-123',
     label: 'Urgent client escalation',
     sender: 'angry.client@example.com',
     subject: 'URGENT: Production is down, need response by 3pm today',
@@ -20,18 +21,21 @@ Regards,
 David`,
   },
   {
+    userId: 'user-123',
     label: 'Routine newsletter',
     sender: 'newsletter@techblog.com',
     subject: 'Your Weekly Tech Digest',
     bodyRaw: `Here are this week's top stories in tech: AI advancements continue, new frameworks released, and more. Click here to read the full digest. Unsubscribe anytime.`,
   },
   {
+    userId: 'user-123',
     label: 'Ambiguous casual email',
     sender: 'colleague@company.com',
     subject: 'quick thing',
     bodyRaw: `hey, did you get a chance to look at that doc I sent last week? no rush just checking in. also are we still on for lunch thursday?`,
   },
   {
+    userId: 'user-123',
     label: 'Meeting request with deadline',
     sender: 'manager@company.com',
     subject: 'Need your input on Q3 budget by Friday',
@@ -46,7 +50,7 @@ async function runTests() {
     console.log('='.repeat(60));
 
     try {
-      const result = await summarizeEmail({
+      const result = await summarizeEmail(testCase.userId, {
         sender: testCase.sender,
         subject: testCase.subject,
         bodyRaw: testCase.bodyRaw,
