@@ -3,14 +3,22 @@ import { prisma } from '../config/db';
 import { getGmailClient } from '../integrations/gmailClient';
 import { logger } from '../config/logger';
 
-export async function editDraft(emailId: string, editedReply: string) {
+export async function editDraft(userId: string, emailId: string, editedReply: string) {
+  const email = await prisma.email.findUnique({ where: { id: emailId } });
+  if (!email) throw new Error('Email not found');
+  if (email.userId !== userId) throw new Error('Unauthorized');
+
   return prisma.email.update({
     where: { id: emailId },
     data: { editedReply },
   });
 }
 
-export async function rejectDraft(emailId: string) {
+export async function rejectDraft(userId: string, emailId: string) {
+  const email = await prisma.email.findUnique({ where: { id: emailId } });
+  if (!email) throw new Error('Email not found');
+  if (email.userId !== userId) throw new Error('Unauthorized');
+
   return prisma.email.update({
     where: { id: emailId },
     data: { status: 'rejected' },

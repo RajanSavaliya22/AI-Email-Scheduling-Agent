@@ -94,8 +94,13 @@ export async function sendDailyDigest() {
       const digestBody = `Your daily inbox digest:\n\n${lines.join('\n')}\n\nReview all: [link to your dashboard]`;
 
       const gmail = await getGmailClient(user.id);
-      const raw = buildNotificationEmail(user.email, `📋 Daily Digest — ${pending.length} items need attention`, digestBody);
+      const NOTIFICATION_TAG = '[AgentNotification]';
 
+      const raw = buildNotificationEmail(
+        user.email, 
+        `${NOTIFICATION_TAG} 📋 Daily Digest — ${pending.length} items need attention`,
+        digestBody
+      );
       await gmail.users.messages.send({ userId: 'me', requestBody: { raw } });
 
       logger.info(`Sent daily digest to user ${user.id} (${pending.length} items)`);

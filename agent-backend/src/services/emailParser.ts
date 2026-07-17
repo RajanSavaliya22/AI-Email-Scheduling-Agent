@@ -1,5 +1,6 @@
 // src/services/emailParser.ts
 import { gmail_v1 } from 'googleapis';
+import libmime from 'libmime';
 
 interface ParsedEmail {
   gmailId: string;
@@ -45,8 +46,10 @@ function extractBody(payload: gmail_v1.Schema$MessagePart): string {
   return '';
 }
 
+
 function getHeader(headers: gmail_v1.Schema$MessagePartHeader[] | undefined, name: string): string {
-  return headers?.find(h => h.name?.toLowerCase() === name.toLowerCase())?.value || '';
+  const raw = headers?.find(h => h.name?.toLowerCase() === name.toLowerCase())?.value || '';
+  return libmime.decodeWords(raw);
 }
 
 export function parseGmailMessage(message: gmail_v1.Schema$Message): ParsedEmail {

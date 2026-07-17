@@ -3,6 +3,7 @@ import express from 'express';
 import passport from 'passport';
 
 const router = express.Router();
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 router.get('/google', passport.authenticate('google', {
   scope: [
@@ -18,14 +19,20 @@ router.get('/google', passport.authenticate('google', {
 }));
 
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login-failed' }),
+  passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login-failed` }),
   (req, res) => {
-    res.redirect('/dashboard'); // or wherever your frontend lives
+    res.redirect(FRONTEND_URL);
   }
 );
 
+router.get('/me', (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+  res.json(req.user);
+});
+
+
 router.get('/logout', (req, res) => {
-  req.logout(() => res.redirect('/'));
+  req.logout(() => res.redirect(FRONTEND_URL));
 });
 
 export default router;

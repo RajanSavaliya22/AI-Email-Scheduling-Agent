@@ -10,16 +10,13 @@ export async function getGmailClient(userId: string): Promise<gmail_v1.Gmail> {
 export async function fetchRecentMessages(userId: string, maxResults = 20) {
   const gmail = await getGmailClient(userId);
 
-  // List message IDs (only metadata at this point)
   const listRes = await gmail.users.messages.list({
     userId: 'me',
     maxResults,
-    q: 'in:inbox', // adjust query as needed, e.g. 'is:unread'
+    q: 'in:inbox -from:me -subject:"[AgentNotification]"',
   });
-
   const messages = listRes.data.messages || [];
 
-  // Fetch full content for each message
   const fullMessages = await Promise.all(
     messages.map(async (msg) => {
       const full = await gmail.users.messages.get({

@@ -8,7 +8,13 @@ export async function confirmProposedEvent(userId: string, eventId: string) {
   if (!event) throw new Error('Event not found');
   if (event.userId !== userId) throw new Error('Unauthorized');
 
-  // Re-check for conflicts right before confirming — calendar may have changed since proposal
+  if (event.status === 'confirmed') {
+    throw new Error('This event has already been confirmed.');
+  }
+  if (event.status === 'cancelled') {
+    throw new Error('This event was cancelled and cannot be confirmed.');
+  }
+
   const { hasConflict } = await checkConflict(userId, event.startTime, event.endTime);
   if (hasConflict) {
     throw new Error('This slot now conflicts with another event. Please choose a different time.');
